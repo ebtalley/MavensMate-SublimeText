@@ -58,7 +58,7 @@ def install
     install_package
     install_user_settings
   elsif OS.linux?
-		#future functionality
+    %x{pip install gkeyring}
 	end
 end
 
