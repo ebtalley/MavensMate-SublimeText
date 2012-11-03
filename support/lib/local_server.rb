@@ -3,8 +3,10 @@ require 'rubygems'
 require 'json'
 require File.dirname(File.dirname(File.dirname(__FILE__))) + "/constants.rb"
 include Constants
+require File.dirname(__FILE__) + '/keychain.rb'
 require File.dirname(__FILE__) + '/lsof.rb'
 require File.dirname(__FILE__) + '/object.rb'
+require File.dirname(__FILE__) + '/os.rb'
 require File.dirname(__FILE__) + '/mavensmate.rb'
 require 'webrick'
 include WEBrick
@@ -388,10 +390,10 @@ module MavensMate
               if yml["org_connections"]
                 connections = yml["org_connections"]
                 keychain_name = project_name + "-mm-"
-                %x{security add-generic-password -a '#{project_name}-mm-#{un}' -s \"#{project_name}-mm-#{un}\" -w #{pw} -U}         
+                KeyChain::add_generic_password("#{project_name}-mm-#{un}", "#{project_name}-mm-#{un}", pw)
                 connections.push({ "username" => un, "environment" => environment })
               else
-                %x{security add-generic-password -a '#{project_name}-mm-#{un}' -s \"#{project_name}-mm-#{un}\" -w #{pw} -U} 
+                KeyChain::add_generic_password("#{project_name}-mm-#{un}", "#{project_name}-mm-#{un}", pw)
                 yml["org_connections"] = [{ "username" => un, "environment" => environment }]
                 connections.push({ "username" => un, "environment" => environment })
               end 
