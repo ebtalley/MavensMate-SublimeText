@@ -324,8 +324,12 @@ module MavensMate
               ENV["MM_WORKSPACE"]         = req.query["where"]
               result = MavensMate.new_project_from_existing_directory(params)
               if result[:success] == true
-                `killAll MavensMate` 
-                #`'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
+                if OS.mac? then
+                  `killAll MavensMate` 
+                  # `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
+                elsif OS.linux? || OS.windows? then
+                  %x{subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'}
+                end
               else
                 resp.body = result.to_json
               end
@@ -360,9 +364,13 @@ module MavensMate
                 result = MavensMate.new_project(params)
               end           
               if result[:success]
-                `killAll MavensMate` 
-                #`~/bin/subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/.sublime-project'` if result[:success]
-                `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
+                if OS.mac? then
+                  # `killAll MavensMate` 
+                  #`~/bin/subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/.sublime-project'` if result[:success]
+                  `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
+                elsif OS.linux? || OS.windows? then
+                  %x{subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'}
+                end
               else
                 resp.body = result.to_json
               end
@@ -465,7 +473,9 @@ module MavensMate
               tree = eval(req.query["tree"])  
               result = MavensMate.clean_project({ :update_sobjects => false, :update_package => true, :package => tree, :force_return => true })
               if result[:success] == true
-                `killAll MavensMate` 
+                if OS.mac? then
+                  `killAll MavensMate`
+                end
               end
               resp.body = result.to_json
             rescue Exception => e
