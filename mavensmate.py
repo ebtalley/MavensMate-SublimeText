@@ -33,6 +33,14 @@ def get_ruby():
 
 ruby = get_ruby()
 
+def get_doxygen():
+    doxygen = "doxygen"
+    if subprocess.call("which doxygen", shell=True) != 0:
+        doxygen = './doxygen'
+    return doxygen
+
+doxygen = get_doxygen()
+
 def start_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server_thin.rb' -e 'MavensMate::LocalServerThin.start'"
     os.system(cmd)
@@ -774,7 +782,7 @@ class ExecuteDoxygen(threading.Thread):
         threading.Thread.__init__(self)   
 
     def run(self):
-        command = '( cat Doxyfile ; echo "INPUT=\\"'+self.dinput+'\\"" ; echo "EXTENSION_MAPPING=cls=Java" ; echo "OUTPUT_DIRECTORY=\\"'+self.doutput+'\\"" ; echo "OPTIMIZE_OUTPUT_JAVA = YES" ; echo "FILE_PATTERNS += *.cls" ; echo "GENERATE_LATEX = NO" ; echo "GENERATE_HTML = NO" ; echo "GENERATE_XML = YES" ) | ./doxygen -'
+        command = '( cat Doxyfile ; echo "INPUT=\\"'+self.dinput+'\\"" ; echo "EXTENSION_MAPPING=cls=Java" ; echo "OUTPUT_DIRECTORY=\\"'+self.doutput+'\\"" ; echo "OPTIMIZE_OUTPUT_JAVA = YES" ; echo "FILE_PATTERNS += *.cls" ; echo "GENERATE_LATEX = NO" ; echo "GENERATE_HTML = NO" ; echo "GENERATE_XML = YES" ) | ' + doxygen + ' -'
         print command
         os.chdir(mm_dir + "/bin")
         os.system(command)
