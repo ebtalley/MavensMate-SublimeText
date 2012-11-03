@@ -44,7 +44,7 @@ def generate_ui(ruby_script, args):
     p = subprocess.Popen(ruby+" '"+mm_dir+"/commands/"+ruby_script+".rb' "+args+"", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     if p.stdout is not None : 
         msg = p.stdout.readlines()
-    temp = tempfile.NamedTemporaryFile(delete=False, prefix="mm")
+    temp = tempfile.NamedTemporaryFile(delete=False, prefix="mm", suffix=".html")
     try:
         temp.write('\n'.join(msg))
     finally:
@@ -52,12 +52,18 @@ def generate_ui(ruby_script, args):
     return temp.name
 
 def launch_mavens_mate_window(temp_file_name):
-    os.system("open '"+mm_dir+"/bin/MavensMate.app' --args -url '"+temp_file_name+"'")
+    if (sys.platform.startswith('darwin')):
+        os.system("open '"+mm_dir+"/bin/MavensMate.app' --args -url '"+temp_file_name+"'")
+    else:
+        os.system("chrome --app='file://%s'" % temp_file_name)
+
     time.sleep(1) 
     os.remove(temp_file_name) #<= we may want to move this delete call to the binary
 
 def kill_mavens_mate_window():
-    os.system("killAll MavensMate")
+    if (sys.platform.startswith('darwin')):
+        os.system("killAll MavensMate")
+    # else: TODO
     
 def get_active_file():
     return sublime.active_window().active_view().file_name()
