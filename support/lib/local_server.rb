@@ -75,6 +75,7 @@ module MavensMate
             begin
               ENV["MM_CURRENT_PROJECT_DIRECTORY"] = req.query["mm_current_project_directory"]
               resp['Content-Type'] = 'json'
+              resp['Access-Control-Allow-Origin'] = "*"
               options = {
                 :level => req.query["level"],
                 :category => req.query["category"],
@@ -98,6 +99,7 @@ module MavensMate
             require SUPPORT + "/environment.rb"
             require File.dirname(File.dirname(File.dirname(__FILE__))) + "/support/tmvc/lib/application_controller.rb"
             resp['Content-Type'] = 'html'
+            resp['Access-Control-Allow-Origin'] = "*"
             test_result = {}
             debug_options = {
               :level => req.query["level"],
@@ -144,6 +146,7 @@ module MavensMate
                 Encoding.default_internal = Encoding::UTF_8
               end
               resp['Content-Type'] = 'html'
+              resp['Access-Control-Allow-Origin'] = "*"
               ENV["MM_CURRENT_PROJECT_DIRECTORY"] = req.query["mm_current_project_directory"]
               mode = req.query["mode"] || ""
               do_refresh = req.query["do_refresh"]
@@ -233,6 +236,7 @@ module MavensMate
               resp.body = html
             rescue Exception => e
                 resp['Content-Type'] = 'json'
+                resp['Access-Control-Allow-Origin'] = "*"
                 result = {
                   :success  => false, 
                   :message  => e.message + "\n\n" + e.backtrace.join("\n")
@@ -246,6 +250,7 @@ module MavensMate
           def do_POST(req, resp)    
             begin
               resp['Content-Type'] = 'html'
+              resp['Access-Control-Allow-Origin'] = "*"
               response = ''
               ENV["MM_CURRENT_PROJECT_DIRECTORY"] = req.query["mm_current_project_directory"]
               targets = JSON.parse(req.query["targets"].to_s)
@@ -399,6 +404,7 @@ module MavensMate
               end 
               File.open("#{project_directory}/config/settings.yaml", 'w') { |f| YAML.dump(yml, f) }
               resp['Content-Type'] = 'json'
+              resp['Access-Control-Allow-Origin'] = "*"
               ac = ApplicationController.new
               connections = MavensMate.get_org_connections 
               html = ac.render_to_string "org_connection/_connections", :locals => { :connections => connections }
@@ -433,6 +439,7 @@ module MavensMate
               end
               File.open("#{project_directory}/config/settings.yaml", 'w') { |f| YAML.dump(yml, f) } 
               resp['Content-Type'] = 'json'
+              resp['Access-Control-Allow-Origin'] = "*"
               ac = ApplicationController.new
               connections = MavensMate.get_org_connections 
               html = ac.render_to_string "org_connection/_connections", :locals => { :connections => connections }
