@@ -32,6 +32,16 @@ def get_ruby():
 
 ruby = get_ruby()
 
+
+def get_chrome():
+    chrome = "chrome"
+    if settings.get('mm_chrome') != None:
+        chrome = settings.get('mm_chrome')
+    return chrome
+
+chrome = get_chrome()
+
+
 def get_doxygen():
     doxygen = "doxygen"
     if subprocess.call("which doxygen", shell=True) != 0:
@@ -62,10 +72,11 @@ def generate_ui(ruby_script, args):
 def launch_mavens_mate_window(temp_file_name):
     if (sys.platform.startswith('darwin')):
         os.system("open '"+mm_dir+"/bin/MavensMate.app' --args -url '"+temp_file_name+"'")
+        time.sleep(1)
     else:
-        os.system("chrome --app='file://%s'" % temp_file_name)
+        subprocess.Popen(chrome + " --app=file://%s" % temp_file_name)
+        time.sleep(3)
 
-    time.sleep(1) 
     os.remove(temp_file_name) #<= we may want to move this delete call to the binary
 
 def kill_mavens_mate_window():
