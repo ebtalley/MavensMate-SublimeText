@@ -10,8 +10,12 @@ To override default MavensMate settings, modify user-specific settings (MavensMa
 	//** if you wish to utilize rvm, set to "~/.rvm/bin/rvm-auto-ruby"
 	"mm_ruby" : "ruby",
 	
+	// change to full path on windows. use slashes instead of backslashes
+	"mm_chrome" : "google-chrome",
+
 	//set to location where you wish your MavensMate project to reside (must be an existing directory)
 	//for example: "/Users/username/Documents/workspaces/mavensmate" (notice the absolute path)
+	// on windows please use slashes instead of backslashes
 	"mm_workspace" : "",
 
 	//set to desired Salesforce.com API version
