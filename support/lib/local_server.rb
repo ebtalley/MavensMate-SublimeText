@@ -322,6 +322,7 @@ module MavensMate
               params[:server_url]         = req.query["server_url"]
               params[:existing_location]  = req.query["existing_location"] 
               ENV["MM_WORKSPACE"]         = req.query["where"]
+              resp['Access-Control-Allow-Origin'] = "*"
               result = MavensMate.new_project_from_existing_directory(params)
               if result[:success] == true
                 if OS.mac? then
@@ -358,6 +359,7 @@ module MavensMate
               params[:package]    = eval(req.query["tree"]) if params[:action] == "new"
               params[:where]      = req.query["where"] 
               ENV["MM_WORKSPACE"] = req.query["where"]
+              resp['Access-Control-Allow-Origin'] = "*"
               if params[:action] == "checkout"
                 result = MavensMate.checkout_project(params)
               else
@@ -477,6 +479,7 @@ module MavensMate
                   `killAll MavensMate`
                 end
               end
+              resp['Access-Control-Allow-Origin'] = "*"
               resp.body = result.to_json
             rescue Exception => e
               puts e.message + e.backtrace.join("\n")
@@ -494,6 +497,7 @@ module MavensMate
                 :object_api_name  => req.query["object_api_name"],
                 :apex_class_type  => req.query["apex_class_type"]
               }) 
+              resp['Access-Control-Allow-Origin'] = "*"
               puts result.inspect
               `killAll MavensMate` if result[:success] #=> result[:message] 
               #`~/bin/subl --command '#{ENV["MM_CURRENT_PROJECT_DIRECTORY"]}/#{params[:pn]}/.sublime-project'` if result[:success]
@@ -517,6 +521,7 @@ module MavensMate
                 :endpoint => req.query["server_url"], 
                 :override_session => req.query["override_session"] || false
               })
+              resp['Access-Control-Allow-Origin'] = "*"
               if ! client.sid.nil? && ! client.metadata_server_url.nil?
                 if update_creds
                   if RUBY_VERSION =~ /1.9/
@@ -572,6 +577,7 @@ module MavensMate
                 :metadata_server_url => murl 
               })
               result = client.list(meta_type, false)
+              resp['Access-Control-Allow-Origin'] = "*"
               resp.body = result 
             rescue Exception => e
                 result = {
@@ -590,6 +596,7 @@ module MavensMate
               svn_pw  = req.query["svn_pw"]
               vc_type = req.query["vc_type"].downcase!
               vc_url  = req.query["vc_url"]
+              resp['Access-Control-Allow-Origin'] = "*"
               
               require 'rubygems'
               require 'nokogiri'
