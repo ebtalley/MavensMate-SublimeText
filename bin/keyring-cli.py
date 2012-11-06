@@ -11,7 +11,7 @@ import keyring.core
 
 class CommandLineTool(object):
     def __init__(self):
-        self.parser = OptionParser(usage="%prog [get|set] SERVICE USERNAME")
+        self.parser = OptionParser(usage="%prog [get|set] SERVICE USERNAME [PASSWORD]")
         self.parser.add_option("-p", "--keyring-path",
                                dest="keyring_path", default=None,
                                help="Path to the keyring backend")
@@ -23,7 +23,10 @@ class CommandLineTool(object):
         opts, args = self.parser.parse_args(argv)
 
         try:
-            kind, service, username = args
+            kind = args[0]
+            service = args[1]
+            username = args[2]
+            password = args[3] if len(args) >= 4 else None
         except ValueError:
             if len(args) == 0:
                 # Be nice with the user if he just tries to launch the tool
@@ -55,7 +58,7 @@ class CommandLineTool(object):
             return 0
 
         elif kind == 'set':
-            password = self.input_password("Password for '%s' in '%s': " %
+            password = password if (password != None) else self.input_password("Password for '%s' in '%s': " %
                                            (username, service))
             keyring.set_password(service, username, password)
             return 0
