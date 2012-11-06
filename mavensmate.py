@@ -50,6 +50,10 @@ def get_doxygen():
 
 doxygen = get_doxygen()
 
+
+def to_posix_path(path):
+    return path.replace('\\', '/')
+
 def start_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server.rb' -e 'MavensMate::LocalServer.start'"
     os.system(cmd)
@@ -83,15 +87,15 @@ def kill_mavens_mate_window():
     if (sys.platform.startswith('darwin')):
         os.system("killAll MavensMate")
     # else: TODO
-    
+
 def get_active_file():
-    return sublime.active_window().active_view().file_name()
+    return to_posix_path(sublime.active_window().active_view().file_name())
 
 def get_project_name():
-    return os.path.basename(sublime.active_window().folders()[0])
+    return to_posix_path(os.path.basename(sublime.active_window().folders()[0]))
 
 def sublime_project_file_path():
-    project_directory = sublime.active_window().folders()[0]
+    project_directory = to_posix_path(sublime.active_window().folders()[0])
     if os.path.isfile(project_directory+"/.sublime-project"):
         return project_directory+"/.sublime-project"
     elif os.path.isfile(project_directory+"/"+get_project_name()+".sublime-project"):
@@ -113,7 +117,7 @@ def is_mm_project():
 
 def mm_project_directory():
     #return sublime.active_window().active_view().settings().get('mm_project_directory') #<= bug
-    return sublime.active_window().folders()[0]
+    return to_posix_path(sublime.active_window().folders()[0])
 
 def mm_workspace():
     workspace = ""
@@ -148,7 +152,7 @@ class OpenProjectCommand(sublime_plugin.WindowCommand):
             for w in sublime.windows():
                 if len(w.folders()) == 0:
                     continue;
-                root = w.folders()[0]
+                root = to_posix_path(w.folders()[0])
                 if mm_workspace() not in root:
                     continue
                 project_name = root.split("/")[-1]
