@@ -56,7 +56,7 @@ def to_posix_path(path):
 
 def start_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server.rb' -e 'MavensMate::LocalServer.start'"
-    os.system(cmd)
+    subprocess.Popen(cmd, shell=True)
 
 def stop_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server.rb' -e 'MavensMate::LocalServer.stop'"

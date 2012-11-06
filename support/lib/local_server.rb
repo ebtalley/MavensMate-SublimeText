@@ -39,7 +39,7 @@ module MavensMate
           stop
           server = WEBrick::HTTPServer.new(
             :Port => 7777,
-            :ServerType => WEBrick::Daemon,
+            #:ServerType => WEBrick::Daemon, # webrick cannot be executed as daemon under windows
             :RequestTimeout => 1800
           )
           
@@ -325,11 +325,14 @@ module MavensMate
               resp['Access-Control-Allow-Origin'] = "*"
               result = MavensMate.new_project_from_existing_directory(params)
               if result[:success] == true
+                project_file = File.join(ENV['MM_WORKSPACE'], params[:pn], params[:pn]+".sublime-project")
                 if OS.mac? then
                   `killAll MavensMate` 
                   # `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
-                elsif OS.linux? || OS.windows? then
-                  %x{subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'}
+                elsif OS.linux? then
+                  %x{subl --project '#{project_file}'}
+                elsif OS.windows? then
+                  %x{sublime_text.exe --project #{project_file}}
                 end
               else
                 resp.body = result.to_json
@@ -366,12 +369,15 @@ module MavensMate
                 result = MavensMate.new_project(params)
               end           
               if result[:success]
+                project_file = File.join(ENV['MM_WORKSPACE'], params[:pn], params[:pn]+".sublime-project")
                 if OS.mac? then
                   # `killAll MavensMate` 
                   #`~/bin/subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/.sublime-project'` if result[:success]
-                  `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
-                elsif OS.linux? || OS.windows? then
-                  %x{subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'}
+                  `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{project_file}'`
+                elsif OS.linux? then
+                  %x{subl --project #{project_file}}
+                elsif OS.windows? then
+                  %x{sublime_text.exe --project #{project_file}}
                 end
               else
                 resp.body = result.to_json
