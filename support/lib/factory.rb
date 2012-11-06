@@ -233,9 +233,8 @@ module MavensMate
         tmp_dir = Dir.tmpdir
         FileUtils.rm_rf("#{tmp_dir}/mmzip")
         Dir.mkdir("#{tmp_dir}/mmzip")
-        Dir.mkdir("#{tmp_dir}/mmzip/unpackaged")
         unpackaged_dir = "#{tmp_dir}/mmzip/unpackaged"
-        %x{cp -R '#{ENV['MM_CURRENT_PROJECT_DIRECTORY']}/src/' '#{unpackaged_dir}'}      
+        FileUtils.cp_r("#{ENV['MM_CURRENT_PROJECT_DIRECTORY']}/src/", unpackaged_dir)
         return zip_tmp_directory
       end 
        
