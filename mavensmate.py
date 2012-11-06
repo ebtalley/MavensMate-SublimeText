@@ -11,7 +11,7 @@ import ast
 import copy
 if os.name != 'nt':
     import unicodedata
-import unicodedata, re
+import re
 import urllib
 from xml.dom.minidom import parse, parseString
 import json
@@ -513,7 +513,7 @@ class MavensMateCompletions(sublime_plugin.EventListener):
             elif os.path.isfile(mm_project_directory()+"/src/classes/"+word+".cls"): #=> custom apex class static methods
                 search_name = prep_for_search(word)
                 print search_name
-                print 'looking for class def in: ' + mm_project_directory()+"/config/.class_docs/xml/class_"+search_name+".xml"
+                print 'looking for class def in: ' + mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml"
                 if os.path.isfile(mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml"):
                     object_dom = parse(mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml")
                     for node in object_dom.getElementsByTagName('memberdef'):
