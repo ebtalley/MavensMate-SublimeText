@@ -44,8 +44,12 @@ chrome = get_chrome()
 
 def get_doxygen():
     doxygen = "doxygen"
-    if subprocess.call("which doxygen", shell=True) != 0:
-        doxygen = './doxygen'
+    if (sys.platform.startswith('win')):
+        if subprocess.call("where /Q doxygen", shell=True) != 0:
+            doxygen = './doxygen'
+    else:
+        if subprocess.call("which doxygen", shell=True) != 0:
+            doxygen = './doxygen'
     return doxygen
 
 doxygen = get_doxygen()
@@ -799,6 +803,8 @@ class ExecuteDoxygen(threading.Thread):
 
     def run(self):
         command = '( cat Doxyfile ; echo "INPUT=\\"'+self.dinput+'\\"" ; echo "EXTENSION_MAPPING=cls=Java" ; echo "OUTPUT_DIRECTORY=\\"'+self.doutput+'\\"" ; echo "OPTIMIZE_OUTPUT_JAVA = YES" ; echo "FILE_PATTERNS += *.cls" ; echo "GENERATE_LATEX = NO" ; echo "GENERATE_HTML = NO" ; echo "GENERATE_XML = YES" ) | ' + doxygen + ' -'
+        if (sys.platform.startswith('win')):
+            command = command.replace(" cat ", " type ").replace(";", "&").replace('\\"',"").replace('"','')
         print command
         os.chdir(mm_dir + "/bin")
         os.system(command)
