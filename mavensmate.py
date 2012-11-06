@@ -11,7 +11,7 @@ import ast
 import copy
 if os.name != 'nt':
     import unicodedata
-import unicodedata, re
+import re
 import urllib
 from xml.dom.minidom import parse, parseString
 import json
