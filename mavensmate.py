@@ -188,6 +188,17 @@ class UpdateMeCommand(sublime_plugin.ApplicationCommand):
         os.system(ruby+" install.rb")    
         #sublime.set_timeout(partial(self.notify), 1)
 
+
+#runs an interactive ruby console for debugging
+class OpenRubyConsoleCommand(sublime_plugin.ApplicationCommand):
+    def run(self):
+        os.environ['MM_WORKSPACE'] = mm_project_directory()
+        thread = threading.Thread(target=self.openConsole)
+        thread.start()
+
+    def openConsole(self):
+        os.system("irb -r '%s/commands/interactive_console.rb'" % (mm_dir))
+
 #refreshes selected directory (or directories)
 # if src is refreshed, project is "cleaned"
 class RefreshDirectoryCommand(sublime_plugin.WindowCommand):

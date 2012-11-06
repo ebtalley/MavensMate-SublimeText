@@ -105,7 +105,11 @@
 					{ 
 	    				"caption": "Debug Panel",  
 	         			"command": "show_debug_panel"
-					}	
+					},
+					{
+	     				"caption": "Interactive Ruby Console",
+	     				"command": "open_ruby_console"
+	     			}
 	         	]
 	     	},
 	     	{
