@@ -805,9 +805,10 @@ module MavensMate
   
   #adds salesforce.com creds to the keychain
   def self.add_to_keychain(project_name, pw)
-    require 'shellwords'
-    pw = Shellwords.escape(pw)
-    project_name = Shellwords.escape(project_name) + "-mm"
+    #require 'shellwords'
+    #pw = Shellwords.escape(pw)
+    #project_name = Shellwords.escape(project_name) + "-mm"
+    project_name += "-mm"
     KeyChain::add_generic_password(project_name, project_name, pw)
   end
   
