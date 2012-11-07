@@ -32,21 +32,39 @@ def get_ruby():
 
 ruby = get_ruby()
 
+
+def get_chrome():
+    chrome = "chrome"
+    if settings.get('mm_chrome') != None:
+        chrome = settings.get('mm_chrome')
+    return chrome
+
+chrome = get_chrome()
+
+
 def get_doxygen():
     doxygen = "doxygen"
-    if subprocess.call("which doxygen", shell=True) != 0:
-        doxygen = './doxygen'
+    if (sys.platform.startswith('win')):
+        if subprocess.call("where /Q doxygen", shell=True) != 0:
+            doxygen = './doxygen'
+    else:
+        if subprocess.call("which doxygen", shell=True) != 0:
+            doxygen = './doxygen'
     return doxygen
 
 doxygen = get_doxygen()
 
+
+def to_posix_path(path):
+    return path.replace('\\', '/')
+
 def start_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server.rb' -e 'MavensMate::LocalServer.start'"
-    os.system(cmd)
+    subprocess.Popen(cmd, shell=True)
 
 def stop_local_server():
-    cmd_b = ruby+" -r '"+mm_dir+"/support/lib/local_server.rb' -e 'MavensMate::LocalServer.stop'"
-    os.system(cmd)
+    cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server.rb' -e 'MavensMate::LocalServer.stop'"
+    subprocess.Popen(cmd, shell=True)
 
 def generate_ui(ruby_script, args):
     p = subprocess.Popen(ruby+" '"+mm_dir+"/commands/"+ruby_script+".rb' "+args+"", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
@@ -62,25 +80,26 @@ def generate_ui(ruby_script, args):
 def launch_mavens_mate_window(temp_file_name):
     if (sys.platform.startswith('darwin')):
         os.system("open '"+mm_dir+"/bin/MavensMate.app' --args -url '"+temp_file_name+"'")
+        time.sleep(1)
     else:
-        os.system("chrome --app='file://%s'" % temp_file_name)
+        subprocess.Popen("%s --app=file://%s" % (chrome, temp_file_name), shell=True)
+        time.sleep(3)
 
-    time.sleep(1) 
     os.remove(temp_file_name) #<= we may want to move this delete call to the binary
 
 def kill_mavens_mate_window():
     if (sys.platform.startswith('darwin')):
         os.system("killAll MavensMate")
     # else: TODO
-    
+
 def get_active_file():
-    return sublime.active_window().active_view().file_name()
+    return to_posix_path(sublime.active_window().active_view().file_name())
 
 def get_project_name():
-    return os.path.basename(sublime.active_window().folders()[0])
+    return to_posix_path(os.path.basename(sublime.active_window().folders()[0]))
 
 def sublime_project_file_path():
-    project_directory = sublime.active_window().folders()[0]
+    project_directory = to_posix_path(sublime.active_window().folders()[0])
     if os.path.isfile(project_directory+"/.sublime-project"):
         return project_directory+"/.sublime-project"
     elif os.path.isfile(project_directory+"/"+get_project_name()+".sublime-project"):
@@ -102,7 +121,7 @@ def is_mm_project():
 
 def mm_project_directory():
     #return sublime.active_window().active_view().settings().get('mm_project_directory') #<= bug
-    return sublime.active_window().folders()[0]
+    return to_posix_path(sublime.active_window().folders()[0])
 
 def mm_workspace():
     workspace = ""
@@ -137,7 +156,7 @@ class OpenProjectCommand(sublime_plugin.WindowCommand):
             for w in sublime.windows():
                 if len(w.folders()) == 0:
                     continue;
-                root = w.folders()[0]
+                root = to_posix_path(w.folders()[0])
                 if mm_workspace() not in root:
                     continue
                 project_name = root.split("/")[-1]
@@ -499,7 +518,7 @@ class MavensMateCompletions(sublime_plugin.EventListener):
             elif os.path.isfile(mm_project_directory()+"/src/classes/"+word+".cls"): #=> custom apex class static methods
                 search_name = prep_for_search(word)
                 print search_name
-                print 'looking for class def in: ' + mm_project_directory()+"/config/.class_docs/xml/class_"+search_name+".xml"
+                print 'looking for class def in: ' + mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml"
                 if os.path.isfile(mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml"):
                     object_dom = parse(mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml")
                     for node in object_dom.getElementsByTagName('memberdef'):
@@ -784,7 +803,8 @@ class ExecuteDoxygen(threading.Thread):
 
     def run(self):
         command = '( cat Doxyfile ; echo "INPUT=\\"'+self.dinput+'\\"" ; echo "EXTENSION_MAPPING=cls=Java" ; echo "OUTPUT_DIRECTORY=\\"'+self.doutput+'\\"" ; echo "OPTIMIZE_OUTPUT_JAVA = YES" ; echo "FILE_PATTERNS += *.cls" ; echo "GENERATE_LATEX = NO" ; echo "GENERATE_HTML = NO" ; echo "GENERATE_XML = YES" ; echo "CASE_SENSE_NAMES = NO" ) | ' + doxygen + ' -'
-        print command
+        if (sys.platform.startswith('win')):
+            command = command.replace(" cat ", " type ").replace(";", "&").replace('\\"',"").replace('"','')
         os.chdir(mm_dir + "/bin")
         os.system(command)
 

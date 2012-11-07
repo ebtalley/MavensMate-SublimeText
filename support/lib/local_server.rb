@@ -39,7 +39,7 @@ module MavensMate
           stop
           server = WEBrick::HTTPServer.new(
             :Port => 7777,
-            :ServerType => WEBrick::Daemon,
+            #:ServerType => WEBrick::Daemon, # webrick cannot be executed as daemon under windows
             :RequestTimeout => 1800
           )
           
@@ -322,13 +322,17 @@ module MavensMate
               params[:server_url]         = req.query["server_url"]
               params[:existing_location]  = req.query["existing_location"] 
               ENV["MM_WORKSPACE"]         = req.query["where"]
+              resp['Access-Control-Allow-Origin'] = "*"
               result = MavensMate.new_project_from_existing_directory(params)
               if result[:success] == true
+                project_file = File.join(ENV['MM_WORKSPACE'], params[:pn], params[:pn]+".sublime-project")
                 if OS.mac? then
                   `killAll MavensMate` 
                   # `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
-                elsif OS.linux? || OS.windows? then
-                  %x{subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'}
+                elsif OS.linux? then
+                  %x{subl --project '#{project_file}'}
+                elsif OS.windows? then
+                  %x{sublime_text.exe --project #{project_file}}
                 end
               else
                 resp.body = result.to_json
@@ -358,18 +362,22 @@ module MavensMate
               params[:package]    = eval(req.query["tree"]) if params[:action] == "new"
               params[:where]      = req.query["where"] 
               ENV["MM_WORKSPACE"] = req.query["where"]
+              resp['Access-Control-Allow-Origin'] = "*"
               if params[:action] == "checkout"
                 result = MavensMate.checkout_project(params)
               else
                 result = MavensMate.new_project(params)
               end           
               if result[:success]
+                project_file = File.join(ENV['MM_WORKSPACE'], params[:pn], params[:pn]+".sublime-project")
                 if OS.mac? then
                   # `killAll MavensMate` 
                   #`~/bin/subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/.sublime-project'` if result[:success]
-                  `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
-                elsif OS.linux? || OS.windows? then
-                  %x{subl --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'}
+                  `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{project_file}'`
+                elsif OS.linux? then
+                  %x{subl --project #{project_file}}
+                elsif OS.windows? then
+                  %x{sublime_text.exe --project #{project_file}}
                 end
               else
                 resp.body = result.to_json
@@ -477,6 +485,7 @@ module MavensMate
                   `killAll MavensMate`
                 end
               end
+              resp['Access-Control-Allow-Origin'] = "*"
               resp.body = result.to_json
             rescue Exception => e
               puts e.message + e.backtrace.join("\n")
@@ -494,6 +503,7 @@ module MavensMate
                 :object_api_name  => req.query["object_api_name"],
                 :apex_class_type  => req.query["apex_class_type"]
               }) 
+              resp['Access-Control-Allow-Origin'] = "*"
               puts result.inspect
               `killAll MavensMate` if result[:success] #=> result[:message] 
               #`~/bin/subl --command '#{ENV["MM_CURRENT_PROJECT_DIRECTORY"]}/#{params[:pn]}/.sublime-project'` if result[:success]
@@ -517,6 +527,7 @@ module MavensMate
                 :endpoint => req.query["server_url"], 
                 :override_session => req.query["override_session"] || false
               })
+              resp['Access-Control-Allow-Origin'] = "*"
               if ! client.sid.nil? && ! client.metadata_server_url.nil?
                 if update_creds
                   if RUBY_VERSION =~ /1.9/
@@ -572,6 +583,7 @@ module MavensMate
                 :metadata_server_url => murl 
               })
               result = client.list(meta_type, false)
+              resp['Access-Control-Allow-Origin'] = "*"
               resp.body = result 
             rescue Exception => e
                 result = {
@@ -590,6 +602,7 @@ module MavensMate
               svn_pw  = req.query["svn_pw"]
               vc_type = req.query["vc_type"].downcase!
               vc_url  = req.query["vc_url"]
+              resp['Access-Control-Allow-Origin'] = "*"
               
               require 'rubygems'
               require 'nokogiri'
