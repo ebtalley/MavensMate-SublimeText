@@ -26,12 +26,23 @@ elsif (OS.linux?) then
   @install_path = File.expand_path("~/.config/sublime-text-2/Packages/MavensMate")
   @user_settings_path = File.expand_path("~/.config/sublime-text-2/Packages/User")
 elsif (OS.windows?) then
-  @install_path = File.expand_path("%USERPROFILE%/AppData/Roaming/Sublime Text 2/Packages/MavensMate")
-  @user_settings_path = File.expand_path("%USERPROFILE%/AppData/Roaming/Sublime Text 2/Packages/User")
+  @install_path = File.expand_path("~/AppData/Roaming/Sublime Text 2/Packages/MavensMate")
+  @user_settings_path = File.expand_path("~/AppData/Roaming/Sublime Text 2/Packages/User")
+end
+
+def check_requirements
+  if OS.mac? then
+    # nothing so far?
+  elsif OS.windows? or OS.linux? then
+    puts "please make sure 'google chrome' (http://www.google.com/chrome) is installed!"
+    puts "please make sure 'doxygen' (http://www.doxygen.org/) is installed!"
+    puts "please make sure 'keyring' (http://pypi.python.org/pypi/keyring) is installed"
+  end
 end
 
 def install_package
-  `git clone git://github.com/joeferraro/MavensMate-SublimeText.git '#{@install_path}'`
+  puts "installing MavensMate Sublime Text 2 package to '#{@install_path}'"
+  %x{git clone git://github.com/joeferraro/MavensMate-SublimeText.git "#{@install_path}"}
 end
 
 def install_user_settings
@@ -60,21 +71,17 @@ end
 # end
 
 def install
-	if OS.windows?
-    #future functionality
-	elsif OS.mac?
-    install_package
-    install_user_settings
-  elsif OS.linux? or OS.windows?
-    %x{pip install keyring}
+	if OS.mac? or OS.linux? or OS.windows?
+    check_requirements
     install_package
     install_user_settings
   else
-    puts 'Could not install MavensMate. Your Operating System is not supported.'
+    puts "Could not install MavensMate. Your Operating System is not supported."
 	end
 end
 
 def uninstall
+  puts "uninstalling MavensMate Sublime Text 2 package"
   FileUtils.rm_rf(@install_path)
 end
 
