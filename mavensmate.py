@@ -686,8 +686,8 @@ class MavensMateCompletions(sublime_plugin.EventListener):
                                 field_type = child.firstChild.nodeValue
                         _completions.append((field_name+" \t"+field_type, field_name))
                     return sorted(_completions)
-                elif os.path.isfile(mm_project_directory()+"/src/objects/"+object_name_lower+".object"): #=> object fields
-                    object_dom = parse(mm_project_directory()+"/src/objects/"+object_name_lower+".object")
+                elif os.path.isfile(mm_project_directory()+"/src/objects/"+object_name+".object"): #=> object fields
+                    object_dom = parse(mm_project_directory()+"/src/objects/"+object_name+".object")
                     for node in object_dom.getElementsByTagName('fields'):
                         field_name = ''
                         field_type = ''
@@ -699,10 +699,11 @@ class MavensMateCompletions(sublime_plugin.EventListener):
                                 field_type = child.firstChild.nodeValue
                         _completions.append((field_name+" \t"+field_type, field_name))
                     return sorted(_completions)
-                elif os.path.isfile(mm_project_directory()+"/src/classes/"+object_name_lower+".cls"): #=> apex classes
+                elif os.path.isfile(mm_project_directory()+"/src/classes/"+object_name+".cls"): #=> apex classes
                     search_name = prep_for_search(object_name)
+                    search_name = search_name.lower()
                     print search_name
-                    print 'looking for class def in: ' + mm_project_directory()+"/config/.class_docs/xml/class_"+search_name+".xml"
+                    print 'looking for class def in: ' + mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml"
                     if os.path.isfile(mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml"):
                         object_dom = parse(mm_project_directory()+"/config/.class_docs/xml/"+search_name+".xml")
                         for node in object_dom.getElementsByTagName('memberdef'):
