@@ -283,7 +283,7 @@ module MavensMate
           end
 
           Dir.chdir("#{tmp_dir}/mmzip")
-          file_contents = File.read("deploy.zip")
+          file_contents = File.open("deploy.zip", "rb"){ |f| f.read }
           base64Package = Base64.encode64(file_contents)
         else
           
@@ -429,7 +429,7 @@ module MavensMate
             end
           end
           #Dir.chdir("#{tmp_dir}/mmzip")
-          file_contents = File.read("#{tmp_dir}/mmzip/deploy.zip")
+          file_contents = File.open("#{tmp_dir}/mmzip/deploy.zip", "rb"){ |f| f.read }
           return Base64.encode64(file_contents)
         end
         
