@@ -387,7 +387,7 @@ class NewApexClassCommand(sublime_plugin.TextCommand):
         api_name, class_type = parse_new_metadata_input(input)
         printer.write('\nCreating New Apex Class => ' + api_name + '\n')
         threads = []
-        thread = MetadataAPICall("new_metadata", "'{:meta_type=>\"ApexClass\", :api_name=>\""+api_name+"\"}' '"+mm_project_directory()+"'")
+        thread = MetadataAPICall("new_metadata", '"{:meta_type=>\'ApexClass\', :api_name=>\''+api_name+'\'}" "'+mm_project_directory()+'"')
         threads.append(thread)
         thread.start()
         handle_threads(threads, printer, handle_result, 0)  
@@ -403,7 +403,7 @@ class NewApexTriggerCommand(sublime_plugin.TextCommand):
         api_name, sobject_name = parse_new_metadata_input(input)
         printer.write('\nCreating New Apex Trigger => ' + api_name + '\n')
         threads = []
-        thread = MetadataAPICall("new_metadata", "'{:meta_type=>\"ApexTrigger\", :api_name=>\""+api_name+"\", :object_api_name=>\""+sobject_name+"\"}' '"+mm_project_directory()+"'")
+        thread = MetadataAPICall("new_metadata", '"{:meta_type=>\'ApexTrigger\', :api_name=>\''+api_name+'\', :object_api_name=>\''+sobject_name+'\'}" "'+mm_project_directory()+'"')
         threads.append(thread)
         thread.start()
         handle_threads(threads, printer, handle_result, 0)  
@@ -419,7 +419,7 @@ class NewApexPageCommand(sublime_plugin.TextCommand):
         api_name = parse_new_metadata_input(input)
         printer.write('\nCreating New Visualforce Page => ' + api_name + '\n')
         threads = []
-        thread = MetadataAPICall("new_metadata", "'{:meta_type=>\"ApexPage\", :api_name=>\""+api_name+"\"}' '"+mm_project_directory()+"'")
+        thread = MetadataAPICall("new_metadata", '"{:meta_type=>\'ApexPage\', :api_name=>\''+api_name+'\'}" "'+mm_project_directory()+'"')
         threads.append(thread)
         thread.start()
         handle_threads(threads, printer, handle_result, 0)  
@@ -435,7 +435,7 @@ class NewApexComponentCommand(sublime_plugin.TextCommand):
         api_name = parse_new_metadata_input(input)
         printer.write('\nCreating New Visualforce Component => ' + api_name + '\n')
         threads = []
-        thread = MetadataAPICall("new_metadata", "'{:meta_type=>\"ApexComponent\", :api_name=>\""+api_name+"\"}' '"+mm_project_directory()+"'")
+        thread = MetadataAPICall("new_metadata", '"{:meta_type=>\'ApexComponent\', :api_name=>\''+api_name+'\'}" "'+mm_project_directory()+'"')
         threads.append(thread)
         thread.start()
         handle_threads(threads, printer, handle_result, 0)  
