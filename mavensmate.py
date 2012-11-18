@@ -61,11 +61,11 @@ def to_posix_path(path):
 
 def start_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server_thin.rb' -e 'MavensMate::LocalServerThin.start'"
-    os.system(cmd)
+    subprocess.Popen(cmd, shell=True)
 
 def stop_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server_thin.rb' -e 'MavensMate::LocalServerThin.stop'"
-    os.system(cmd)
+    subprocess.Popen(cmd, shell=True)
 
 def generate_ui(ruby_script, args):
     p = subprocess.Popen(ruby+" '"+mm_dir+"/commands/"+ruby_script+".rb' "+args+"", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
