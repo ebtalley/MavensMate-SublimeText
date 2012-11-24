@@ -639,7 +639,9 @@ module MavensMate
                 tree = eval(req["tree"])  
                 result = MavensMate.clean_project({ :update_sobjects => false, :update_package => true, :package => tree, :force_return => true })
                 if result[:success] == true
-                  `killAll MavensMate`
+                  if OS.mac? then
+                    `killAll MavensMate` 
+                  end
                 end
                 result = {
                   :success => true
