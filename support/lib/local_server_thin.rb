@@ -55,7 +55,7 @@ module MavensMate
         def respond(body, type)
           [
             200,
-            { 'Content-Type' => type, 'Access-Control-Allow-Origin' => "*" },
+            { 'Content-Type' => type, 'Access-Control-Allow-Origin' => "*", 'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE' },
             body
           ]
         end
