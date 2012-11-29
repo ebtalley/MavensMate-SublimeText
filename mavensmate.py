@@ -412,7 +412,7 @@ class NewApexClassCommand(sublime_plugin.TextCommand):
         api_name, class_type = parse_new_metadata_input(input)
         printer.write('\nCreating New Apex Class => ' + api_name + '\n')
         threads = []
-        thread = MetadataAPICall("new_metadata", "'{:meta_type=>\"ApexClass\", :api_name=>\""+api_name+"\", :apex_class_type=>\""+class_type+"\"}' '"+mm_project_directory()+"'")
+        thread = MetadataAPICall("new_metadata", '"{:meta_type=>\'ApexClass\', :api_name=>\''+api_name+'\', :apex_class_type=>\''+class_type+'\'}" "'+mm_project_directory()+'"')
         threads.append(thread)
         thread.start()
         handle_threads(threads, printer, handle_result, 0)  
