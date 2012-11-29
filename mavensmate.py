@@ -43,7 +43,6 @@ def get_chrome():
 
 chrome = get_chrome()
 
-
 def get_doxygen():
     doxygen = "doxygen"
     if (sys.platform.startswith('win')):
@@ -56,6 +55,19 @@ def get_doxygen():
 
 doxygen = get_doxygen()
 
+def get_sublime():
+    sublime_bin = "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl"
+    if (sys.platform.startswith('win')):
+        if subprocess.call(["where", "/Q", "sublime_text.exe"]) == 0:
+            sublime_bin = "sublime_text.exe"
+        else:
+            sublime_bin = "C:/Program Files/Sublime Text 2/sublime_text.exe"
+    elif (sys.platform.startswith('linux')):
+        if subprocess.call(["which", "subl"]) == 0:
+            sublime_bin = "subl"
+    return sublime_bin
+
+sublime_bin = get_sublime()
 
 def to_posix_path(path):
     return path.replace('\\', '/')
@@ -189,10 +201,11 @@ class OpenProjectCommand(sublime_plugin.WindowCommand):
         self.picked_project = self.results[picked]
         print 'opening project: ' + self.picked_project
         project_file = self.dir_map[self.picked_project][1]
-        if os.path.isfile(mm_workspace()+"/"+self.picked_project+"/"+project_file):
-            p = subprocess.Popen("'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '"+mm_workspace()+"/"+self.picked_project+"/"+project_file+"'", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+        project_file_path = mm_workspace()+"/"+self.picked_project+"/"+project_file
+        if os.path.isfile(project_file_path):
+            p = subprocess.Popen([sublime_bin, '--project', project_file_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)
         else:
-            sublime.message_dialog("Cannot find: "+mm_workspace()+"/"+self.picked_project+"/"+project_file)
+            sublime.message_dialog("Cannot find: " + project_file_path)
 
 #launches the org connections UI
 class OrgConnectionsCommand(sublime_plugin.ApplicationCommand):
