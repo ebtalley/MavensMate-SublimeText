@@ -289,6 +289,7 @@ module MavensMate
           file_contents = File.open("deploy.zip", "rb"){ |f| f.read }
           base64Package = Base64.encode64(file_contents)
           Dir.chdir(tmp_dir)
+          return base64Package
         else
           
         end
