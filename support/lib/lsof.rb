@@ -36,7 +36,7 @@ class Lsof
 
     def find_pids_cmd(port)
       if MavensMate::OS.windows? then
-        "netstat -aon | findstr :#{port} | findstr LISTENING"
+        "netstat -aon | findstr :#{port}"
       else
         "lsof -i tcp:#{port} | grep '(LISTEN)' | awk '{print $2}'"
         "lsof -i :#{port} | grep '(LISTEN)' | awk '{print $2}'"
