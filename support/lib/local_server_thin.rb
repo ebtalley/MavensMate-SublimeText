@@ -527,7 +527,7 @@ module MavensMate
                   elsif OS.linux? then
                     %x{subl --project '#{project_file}'}
                   elsif OS.windows? then
-                    %x{sublime_text.exe --project '#{project_file}'}
+                    %x{sublime_text.exe --project #{project_file}}
                   end
                 else
                   body = result.to_json
