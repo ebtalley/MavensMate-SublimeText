@@ -450,7 +450,7 @@ class NewApexClassCommand(sublime_plugin.TextCommand):
 
     def run(self, edit): 
         send_usage_statistics('New Apex Class')
-        sublime.active_window().show_input_panel("Apex Class Name, Template (base, test, batch, sched, email, empty)", "MyClass, base", self.on_input, None, None)
+        sublime.active_window().show_input_panel("Apex Class Name, Template (base, test, batch, sched, email, exception, empty)", "MyClass, base", self.on_input, None, None)
     
     def on_input(self, input): 
         printer = PanelPrinter.get(self.view.window().id())
