@@ -1,4 +1,4 @@
-#MavensMate
+#MavensMate IDE for Force.com
 
 [![Build Status](https://travis-ci.org/amtrack/MavensMate-SublimeText.png?branch=linux_windows)](https://travis-ci.org/amtrack/MavensMate-SublimeText) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/amtrack/MavensMate-SublimeText)
 
