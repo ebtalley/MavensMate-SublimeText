@@ -46,10 +46,10 @@ chrome = get_chrome()
 def get_doxygen():
     doxygen = "doxygen"
     if (sys.platform.startswith('win')):
-        if subprocess.call("where /Q doxygen", shell=True) != 0:
+        if subprocess.call(["where", "/Q", "doxygen"], stdout=subprocess.PIPE) != 0:
             doxygen = './doxygen'
     else:
-        if subprocess.call("which doxygen", shell=True) != 0:
+        if subprocess.call(["which", "doxygen"], stdout=subprocess.PIPE) != 0:
             doxygen = './doxygen'
     return doxygen
 
@@ -58,12 +58,12 @@ doxygen = get_doxygen()
 def get_sublime():
     sublime_bin = "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl"
     if (sys.platform.startswith('win')):
-        if subprocess.call(["where", "/Q", "sublime_text.exe"]) == 0:
+        if subprocess.call(["where", "/Q", "sublime_text.exe"], stdout=subprocess.PIPE) == 0:
             sublime_bin = "sublime_text.exe"
         else:
             sublime_bin = "C:/Program Files/Sublime Text 2/sublime_text.exe"
     elif (sys.platform.startswith('linux')):
-        if subprocess.call(["which", "subl"]) == 0:
+        if subprocess.call(["which", "subl"], stdout=subprocess.PIPE) == 0:
             sublime_bin = "subl"
     return sublime_bin
 
@@ -74,7 +74,7 @@ def to_posix_path(path):
 
 def start_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server_thin.rb' -e 'MavensMate::LocalServerThin.start'"
-    p = subprocess.Popen(cmd, shell=True)
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     p.poll()
     if p.returncode != 0 and p.returncode != None:
         msg = 'The local MavensMate server has failed to stop'
@@ -84,7 +84,7 @@ def start_local_server():
 
 def stop_local_server():
     cmd = ruby+" -r '"+mm_dir+"/support/lib/local_server_thin.rb' -e 'MavensMate::LocalServerThin.stop'"
-    subprocess.Popen(cmd, shell=True)
+    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 
 def generate_ui(ruby_script, args):
     p = subprocess.Popen(ruby+" '"+mm_dir+"/commands/"+ruby_script+".rb' "+args+"", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
@@ -102,7 +102,7 @@ def launch_mavens_mate_window(temp_file_name):
         os.system("open '"+mm_dir+"/bin/MavensMate.app' --args -url '"+temp_file_name+"'")
         time.sleep(1)
     else:
-        subprocess.Popen("%s --app=file://%s" % (chrome, temp_file_name), shell=True)
+        subprocess.Popen("%s --app=file://%s" % (chrome, temp_file_name), shell=True, stdout=subprocess.PIPE)
         time.sleep(3)
 
     os.remove(temp_file_name) #<= we may want to move this delete call to the binary
