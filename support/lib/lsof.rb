@@ -10,7 +10,7 @@ class Lsof
           %x{taskkill /F /PID #{pid}}
         end
       else
-        `kill #{pid} 2>&1`
+        `kill #{pids.join(' ')}`
       end
     end
 
@@ -36,10 +36,9 @@ class Lsof
 
     def find_pids_cmd(port)
       if MavensMate::OS.windows? then
-        "netstat -aon | findstr :#{port}"
+        "SET LANG=en_US & netstat -aon | findstr :#{port} | findstr LISTENING"
       else
         "lsof -i tcp:#{port} | grep '(LISTEN)' | awk '{print $2}'"
-        "lsof -i :#{port} | grep '(LISTEN)' | awk '{print $2}'"
       end
     end
   end
