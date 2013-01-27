@@ -1,5 +1,7 @@
 #MavensMate
 
+[![Build Status](https://travis-ci.org/amtrack/MavensMate-SublimeText.png?branch=linux_windows)](https://travis-ci.org/amtrack/MavensMate-SublimeText) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/amtrack/MavensMate-SublimeText)
+
 MavensMate is a SublimeText plugin that aims to replicate the functionality of the Eclipse-based Force.com IDE.
 
 * Create & Edit Salesforce.com projects with specific package metadata
