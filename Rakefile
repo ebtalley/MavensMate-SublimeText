@@ -1,7 +1,10 @@
-task :default => [:test]
+require 'rake/testtask'
 
-desc "run unit tests"
-task :test do
-	ruby "support/test/keychain_test.rb"
-	ruby "support/test/local_server_thin_test.rb"
+desc "run all unit tests"
+Rake::TestTask.new do |t|
+	t.libs = []
+	t.name = "test_all"
+	t.test_files = FileList['support/test/*test.rb']
 end
+
+task :default => [:test_all]
