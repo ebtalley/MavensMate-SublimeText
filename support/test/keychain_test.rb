@@ -16,6 +16,8 @@ class KeyChainTests < Test::Unit::TestCase
   end
 
   def test_keychain_no_password
-    assert_equal('', KeyChain::find_generic_password('testaccountwhichdoesnotexist', 'testservicewhichdoesnotexist'))
+    assert_raise KeyChainError do
+      KeyChain::find_generic_password('testaccountwhichdoesnotexist', 'testservicewhichdoesnotexist')
+    end
   end
 end
