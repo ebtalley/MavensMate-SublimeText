@@ -1,6 +1,7 @@
 require "test/unit"
 
-require_relative '../../constants.rb'
+# require_relative '../../constants.rb'
+require  File.join(File.expand_path(File.dirname(__FILE__)), '../../constants.rb')
 include Constants
 
 require LIB_ROOT + '/mavensmate.rb'
