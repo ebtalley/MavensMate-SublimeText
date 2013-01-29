@@ -10,4 +10,5 @@ gem "thin",  "1.4.1"
 
 group :test do
   gem "rake"
+  gem "simplecov"
 end
