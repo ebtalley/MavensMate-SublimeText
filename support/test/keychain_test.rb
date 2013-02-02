@@ -7,6 +7,7 @@ include Constants
 
 require LIB_ROOT + '/mavensmate.rb'
 require LIB_ROOT + '/keychain.rb'
+require LIB_ROOT + '/os.rb'
 
 class KeyChainTests < Test::Unit::TestCase
   def test_keychain
@@ -17,8 +18,12 @@ class KeyChainTests < Test::Unit::TestCase
   end
 
   def test_keychain_no_password
-    assert_raise KeyChainError do
-      KeyChain::find_generic_password('testaccountwhichdoesnotexist', 'testservicewhichdoesnotexist')
+    if MavensMate::OS.mac?
+      assert_equal(nil, KeyChain::find_generic_password('testaccountwhichdoesnotexist', 'testservicewhichdoesnotexist'))
+    else
+      assert_raise KeyChainError do
+        KeyChain::find_generic_password('testaccountwhichdoesnotexist', 'testservicewhichdoesnotexist')
+      end
     end
   end
 

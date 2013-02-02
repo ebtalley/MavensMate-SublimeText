@@ -12,6 +12,7 @@ require LIB_ROOT + '/local_server_thin.rb'
 
 class LocalServerTests < Test::Unit::TestCase
     def setup
+        @RUBY = MM_USER_CONFIG['mm_ruby'] || MM_DEFAULT_CONFIG['mm_ruby'] || 'ruby'
         start_server
     end
 
@@ -63,12 +64,13 @@ class LocalServerTests < Test::Unit::TestCase
     private
 
     def start_server
-        pid = Process.spawn("ruby -r #{ENV['TM_BUNDLE_SUPPORT']}/lib/local_server_thin.rb -e 'MavensMate::LocalServerThin.start'", :out => '/dev/null')
+        pid = Process.spawn("#{@RUBY} -r '#{LIB_ROOT}/local_server_thin.rb' -e 'MavensMate::LocalServerThin.start'", :out => '/dev/null')
         Process.detach pid
         sleep 1
     end
 
     def stop_server
         MavensMate::LocalServerThin::stop
+        sleep 1
     end
 end
