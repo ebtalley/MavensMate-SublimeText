@@ -47,7 +47,7 @@ chrome = get_chrome()
 
 def get_doxygen():
     doxygen = "doxygen"
-    if (sys.platform.startswith('win')):
+    if (sublime.platform() == 'windows'):
         if subprocess.call(["where", "/Q", "doxygen"], stdout=subprocess.PIPE) != 0:
             doxygen = './doxygen'
     else:
@@ -59,12 +59,12 @@ doxygen = get_doxygen()
 
 def get_sublime():
     sublime_bin = "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl"
-    if (sys.platform.startswith('win')):
+    if (sublime.platform() == 'windows'):
         if subprocess.call(["where", "/Q", "sublime_text.exe"], stdout=subprocess.PIPE) == 0:
             sublime_bin = "sublime_text.exe"
         else:
             sublime_bin = "C:/Program Files/Sublime Text 2/sublime_text.exe"
-    elif (sys.platform.startswith('linux')):
+    elif (sublime.platform() == 'linux'):
         if subprocess.call(["which", "subl"], stdout=subprocess.PIPE) == 0:
             sublime_bin = "subl"
     return sublime_bin
@@ -100,7 +100,7 @@ def generate_ui(ruby_script, args):
     return temp.name
 
 def launch_mavens_mate_window(temp_file_name):
-    if (sys.platform.startswith('darwin')):
+    if (sublime.platform() == 'osx'):
         os.system("open '"+mm_dir+"/bin/MavensMate.app' --args -url '"+temp_file_name+"'")
         time.sleep(1)
     else:
@@ -110,7 +110,7 @@ def launch_mavens_mate_window(temp_file_name):
     os.remove(temp_file_name) #<= we may want to move this delete call to the binary
 
 def kill_mavens_mate_window():
-    if (sys.platform.startswith('darwin')):
+    if (sublime.platform() == 'osx'):
         os.system("killAll MavensMate")
     # else: TODO
 
@@ -981,7 +981,7 @@ class ExecuteDoxygen(threading.Thread):
 
     def run(self):
         command = '( cat Doxyfile ; echo "INPUT=\\"'+self.dinput+'\\"" ; echo "EXTENSION_MAPPING=cls=Java" ; echo "OUTPUT_DIRECTORY=\\"'+self.doutput+'\\"" ; echo "OPTIMIZE_OUTPUT_JAVA = YES" ; echo "FILE_PATTERNS += *.cls" ; echo "GENERATE_LATEX = NO" ; echo "GENERATE_HTML = NO" ; echo "GENERATE_XML = YES" ; echo "CASE_SENSE_NAMES = NO" ) | ' + doxygen + ' -'
-        if (sys.platform.startswith('win')):
+        if (sublime.platform() == 'windows'):
             command = command.replace(" cat ", " type ").replace(";", "&").replace('\\"',"").replace('"','')
         print command
         os.chdir(mm_dir + "/bin")
