@@ -456,7 +456,7 @@ module MavensMate
               if result[:success] == true
                 project_file = File.join(ENV['MM_WORKSPACE'], params[:pn], params[:pn]+".sublime-project")
                 if OS.mac? then
-                  `killAll MavensMate` 
+                  `killAll MavensMate`
                   # `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{ENV["MM_WORKSPACE"]}/#{params[:pn]}/#{params[:pn]}.sublime-project'` if result[:success]
                 elsif OS.linux? then
                   %x{subl --project '#{project_file}'}
@@ -512,7 +512,7 @@ module MavensMate
                   body = res.to_json
                   project_file = File.join(ENV['MM_WORKSPACE'], params[:pn], params[:pn]+".sublime-project")
                   if OS.mac? then
-                    `killAll MavensMate` 
+                    `killAll MavensMate`
                     `'/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl' --project '#{project_file}'`
                   elsif OS.linux? then
                     %x{subl --project '#{project_file}'}
@@ -636,7 +636,7 @@ module MavensMate
                 result = MavensMate.clean_project({ :update_sobjects => false, :update_package => true, :package => tree, :force_return => true })
                 if result[:success] == true
                   if OS.mac? then
-                    `killAll MavensMate` 
+                    `killAll MavensMate`
                   end
                 end
                 result = {

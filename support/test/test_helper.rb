@@ -1,4 +1,4 @@
-require 'erb'
+require 'erb'   
 
 if ENV['COVERAGE'] == 'true'
   require 'simplecov'
