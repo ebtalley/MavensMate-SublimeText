@@ -64,9 +64,12 @@ class LocalServerTests < Test::Unit::TestCase
     private
 
     def start_server
-        pid = Process.spawn("#{@RUBY} -r '#{LIB_ROOT}/local_server_thin.rb' -e 'MavensMate::LocalServerThin.start'", :out => '/dev/null')
+        sin, sout = IO.pipe
+        pid = Process.spawn("#{@RUBY} -r '#{LIB_ROOT}/local_server_thin.rb' -e 'MavensMate::LocalServerThin.start'", :out => sout)
         Process.detach pid
         sleep 1
+        sin.close
+        sout.close
     end
 
     def stop_server
