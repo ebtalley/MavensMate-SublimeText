@@ -20,7 +20,7 @@ module KeyChain
         result =~ /^password: "(.*)"$/ ? $1 : nil
       elsif MavensMate::OS.linux? or MavensMate::OS.windows? then
         pw = %x(#{PYTHON} "#{ROOT}/bin/keyring-cli.py" get "MavensMate: #{service}" "#{account}").strip
-        raise KeyChainError, "Error getting password for: #{account} #{service}" unless $?.success?
+        return nil unless $?.success?
         return pw
       end
     end
@@ -38,7 +38,7 @@ module KeyChain
         result =~ /^password: "(.*)"$/ ? $1 : nil
       elsif MavensMate::OS.linux? or MavensMate::OS.windows? then
         pw = %x(#{PYTHON} "#{ROOT}/bin/keyring-cli.py" get "MavensMate: #{aname}" "#{aname}").strip
-        raise KeyChainError, "Error getting password for: #{aname}" unless $?.success?
+        return nil unless $?.success?
         return pw
       end
     end
