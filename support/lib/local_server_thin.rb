@@ -41,19 +41,9 @@ module MavensMate
 
         def start
           stop
-          #exit if fork            # Parent exits, child continues.
-          #Process.setsid          # Become session leader.
-          #exit if fork            # Zap session leader.
           MavensMate::logger.debug 'thin server starting on port 7777'
-          #exit if fork            # Parent exits, child continues.
-          #Process.setsid          # Become session leader.
-          #exit if fork            # Zap session leader.
-
-          #pid = fork do
-            server = MavensMate::LocalServerThin.get_server_config 
-            Thin::Server.new('0.0.0.0', 7777, server).start! 
-          #end
-          #Process.detach(pid)
+          server = MavensMate::LocalServerThin.get_server_config 
+          Thin::Server.new('0.0.0.0', 7777, server).start! 
         end
 
         def respond(body, type)
