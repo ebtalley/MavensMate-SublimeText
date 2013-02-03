@@ -789,7 +789,7 @@ module MavensMate
     begin
       pconfig = MavensMate.get_project_config
       pconfig['org_connections'].each do |connection| 
-        pw = KeyChain::find_generic_password("#{pconfig['project_name']}-mm-#{connection['username']}", "#{pconfig['project_name']}-mm-#{connection['username']}")
+        pw = KeyChain::find_internet_password("#{pconfig['project_name']}-mm-#{connection['username']}")
         connections.push({
           :un => connection["username"], 
           :pw => pw
