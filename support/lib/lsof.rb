@@ -36,10 +36,9 @@ class Lsof
 
     def find_pids_cmd(port)
       if MavensMate::OS.windows? then
-        #"SET LANG=en_US & netstat -aon | findstr :#{port} | findstr LISTENING"
-        "chcp 437 > NUL & netstat -aon | findstr :#{port} | findstr LISTENING"
+        "netstat -aon | findstr 0.0.0.0:#{port}"
       else
-        "lsof -i tcp:#{port} | grep '(LISTEN)' | awk '{print $2}'"
+        "LANG=C lsof -i tcp:#{port} | grep '(LISTEN)' | awk '{print $2}'"
       end
     end
   end
