@@ -1,7 +1,6 @@
 import mavensmate
 
 import unittest
-import subprocess
 import time
 import sys
 
@@ -29,11 +28,17 @@ class LocalServerTest(unittest.TestCase):
         self.assertFalse('!' in workspace)
 
     def test_binaries(self):
-        binaries_os = {"osx": [mavensmate.ruby],
-                        "windows_linux": [mavensmate.ruby, mavensmate.doxygen, mavensmate.chrome]
+        binaries_os = {"osx":      [mavensmate.ruby, mavensmate.sublime_bin, mavensmate.doxygen],
+                        "windows": [mavensmate.ruby, mavensmate.sublime_bin, mavensmate.doxygen, mavensmate.chrome],
+                        "linux":   [mavensmate.ruby, mavensmate.sublime_bin, mavensmate.doxygen, mavensmate.chrome]
                     }
-        binaries = binaries_os['osx'] if sys.platform.startswith('darwin') else binaries_os['windows_linux']
+        binaries = []
+        if (sys.platform.startswith('darwin')):
+            binaries = binaries_os['osx']
+        elif sys.platform.startswith('win'):
+            binaries = binaries_os['windows']
+        else:
+            binaries = binaries_os['linux']
+
         for binary in binaries:
-            p = subprocess.Popen([binary, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            (stdout, stderr) = p.communicate()
-            self.assertEqual(0, p.returncode, msg=stdout)
+            self.assertTrue(mavensmate.binary_exists(binary), msg="binary '%s' does not exist or is not in PATH" % binary)

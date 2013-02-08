@@ -28,6 +28,12 @@ settings = sublime.load_settings('mavensmate.sublime-settings')
 hide_panel = settings.get('mm_hide_panel_on_success', 1)
 hide_time = settings.get('mm_hide_panel_time', 1)
 
+sublime_bin = settings.get('mm_sublime', 'sublime_text') if (sublime.platform() != 'osx' or settings.has('mm_sublime')) else '/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl'
+doxygen = settings.get('mm_doxygen', 'doxygen') if (sublime.platform() != 'osx' or settings.has('mm_doxygen')) else './doxygen'
+ruby = settings.get('mm_ruby', 'ruby')
+chrome = settings.get('mm_chrome', 'chrome')
+python = settings.get('mm_python', 'python')
+
 def check_for_workspace():
     if not os.path.exists(settings.get('mm_workspace')):
         #os.makedirs(settings.get('mm_workspace')) we're not creating the directory here bc there's some sort of weird race condition going on
@@ -35,51 +41,18 @@ def check_for_workspace():
         sublime.message_dialog(msg)  
         raise BaseException
 
-def get_ruby():
-    ruby = "ruby"    
-    if settings.get('mm_ruby') != None: 
-        ruby = settings.get('mm_ruby')
-    return ruby
-
-ruby = get_ruby()
-
-
-def get_chrome():
-    chrome = "chrome"
-    if settings.get('mm_chrome') != None:
-        chrome = settings.get('mm_chrome')
-    return chrome
-
-chrome = get_chrome()
-
-def get_doxygen():
-    doxygen = "doxygen"
-    if (sublime.platform() == 'windows'):
-        if subprocess.call(["where", "/Q", "doxygen"], stdout=subprocess.PIPE) != 0:
-            doxygen = './doxygen'
-    else:
-        if subprocess.call(["which", "doxygen"], stdout=subprocess.PIPE) != 0:
-            doxygen = './doxygen'
-    return doxygen
-
-doxygen = get_doxygen()
-
-def get_sublime():
-    sublime_bin = "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl"
-    if (sublime.platform() == 'windows'):
-        if subprocess.call(["where", "/Q", "sublime_text.exe"], stdout=subprocess.PIPE) == 0:
-            sublime_bin = "sublime_text.exe"
-        else:
-            sublime_bin = "C:/Program Files/Sublime Text 2/sublime_text.exe"
-    elif (sublime.platform() == 'linux'):
-        if subprocess.call(["which", "subl"], stdout=subprocess.PIPE) == 0:
-            sublime_bin = "subl"
-    return sublime_bin
-
-sublime_bin = get_sublime()
-
 def to_posix_path(path):
     return path.replace('\\', '/')
+
+def binary_exists(binary):
+    if ('/' in binary):
+        return os.path.isfile(binary)
+    else:
+        if (sublime.platform() == 'windows'):
+            return (subprocess.call(["where", "/Q", binary], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0)
+        elif (sublime.platform() in ['linux', 'osx']):
+            return (subprocess.call(["which", binary], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0)
+    return False
 
 def start_local_server():
     check_for_workspace()
