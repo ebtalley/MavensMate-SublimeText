@@ -17,6 +17,7 @@ from xml.dom.minidom import parse, parseString
 import json
 import apex_reserved 
 import traceback
+import zipfile
 
 from test_runner import *
 
@@ -889,17 +890,29 @@ class DeployResourceBundleCommand(sublime_plugin.WindowCommand):
         printer = PanelPrinter.get(self.window.id())
         printer.show()
         printer.write('\nBundling and deploying to server => ' + self.picked_bundle + '\n') 
+        zipFileName = mm_project_directory() + "/src/staticresources/" + self.picked_bundle
+        dirName = mm_project_directory()+"/resource-bundles/"+self.picked_bundle
         # delete existing sr
-        if os.path.exists(mm_project_directory()+"/src/staticresources/"+self.picked_bundle):
-            os.remove(mm_project_directory()+"/src/staticresources/"+self.picked_bundle)
+        if os.path.exists(zipFileName):
+            os.remove(zipFileName)
         # zip bundle to static resource dir 
-        os.chdir(mm_project_directory()+"/resource-bundles/"+self.picked_bundle)
-        cmd = "zip -r -X '"+mm_project_directory()+"/src/staticresources/"+self.picked_bundle+"' *"      
-        os.system(cmd)
+        os.chdir(dirName)
+        fileList = []
+        if os.path.isfile(dirName):
+            fileList.append(dirName)
+        else:
+            for root, dirs, files in os.walk(dirName):
+                for name in files:
+                    fileList.append(os.path.join(root, name))
+
+        zf = zipfile.ZipFile(zipFileName, "w", zipfile.zlib.DEFLATED)
+        for tar in fileList:
+            arcName = tar[len(dirName):]
+            zf.write(tar,arcName)
+        zf.close()
         #compile
-        file_path = mm_project_directory()+"/src/staticresources/"+self.picked_bundle
         threads = []
-        thread = MetadataAPICall("compile_file", "'"+file_path+"'")
+        thread = MetadataAPICall("compile_file", "'"+dirName+"'")
         threads.append(thread)
         thread.start()
         handle_threads(threads, printer, handle_result, 0)
@@ -921,12 +934,22 @@ def create_resource_bundle(self, files):
 
     for file in files:
         fileName, fileExtension = os.path.splitext(file)
-        baseFileName = fileName.split("/")[-1]
-        if os.path.exists(mm_project_directory()+'/resource-bundles/'+baseFileName+fileExtension):
+        baseFileName = to_posix_path(fileName).split("/")[-1]
+        unZipTargetDir = mm_project_directory()+'/resource-bundles/'+baseFileName+fileExtension
+        if os.path.exists(unZipTargetDir):
             printer.write('[OPERATION FAILED]: The resource bundle already exists\n')
             return
-        cmd = 'unzip \''+file+'\' -d \''+mm_project_directory()+'/resource-bundles/'+baseFileName+fileExtension+'\''
-        res = os.system(cmd)
+        zfObj = zipfile.ZipFile(file)
+        for name in zfObj.namelist():
+            if name.endswith(os.path.sep):
+                os.mkdir(os.path.join(unZipTargetDir, name))
+            else:
+                ext_filename = os.path.join(unZipTargetDir, name)
+                ext_dir = os.path.dirname(ext_filename)
+                if not os.path.exists(ext_dir): os.mkdir(ext_dir, 0777)
+                outfile = open(ext_filename, 'wb')
+                outfile.write(zfObj.read(name))
+                outfile.close()
 
     printer.write('[Resource bundle creation complete]\n')
     printer.hide()
