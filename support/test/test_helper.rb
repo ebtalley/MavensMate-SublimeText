@@ -1,4 +1,6 @@
 require 'erb'   
+require 'coveralls'
+Coveralls.wear!
 
 if ENV['COVERAGE'] == 'true'
   require 'simplecov'
