@@ -1,7 +1,5 @@
 *.pyc
 
-mavensmate.pyc
-
 .DS_Store
 
 support/.DS_Store
@@ -23,3 +21,5 @@ support/lib/test_packages.rb
 bin/.DS_Store
 
 coverage
+
+command_helper.pyc
